@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import Registration from './pages/Registration/Registration.jsx';
 import Login from './pages/Login/Login.jsx';
+import firebaseConfig from './authentication/firebaseConfig.jsx';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {

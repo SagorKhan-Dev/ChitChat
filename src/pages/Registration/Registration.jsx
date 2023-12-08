@@ -4,9 +4,17 @@ import { MdEmail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { IoMdEyeOff } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+// TOSTIFY
+import { ToastContainer, toast } from 'react-toastify';
+// FIREBASAE AUTHENTICATION
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const Registration = () => {
+  //  FIREBASE AUTHENTICATON
+  const auth = getAuth();
+  // NAVIGATE
+  const navigate = useNavigate();
   // EMAIL
   const [email, setEmail] = useState("");
   const [emailErr, setEmailErr] = useState("");
@@ -34,14 +42,41 @@ const Registration = () => {
   const handleClick = () => {
     if (!email) {
       setEmailErr("⚠️   Email is required");
-    }else {
-      console.log(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+    } else {
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        setEmailErr("⚠️   Please enter a valid email address");
+      }
     }
     if (!fullName) {
       setFullNameErr("⚠️   Fullname is required");
     }
     if (!password) {
       setPasswordErr("⚠️   Password is required");
+    }
+
+    if (
+      email &&
+      fullName &&
+      password &&
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          toast.success("Registration done, please verify your email");
+          setEmail("");
+          setFullName("");
+          setPassword("");
+          setTimeout(()=>{
+            navigate('/login')
+          },2000)
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          console.log(errorCode);
+          if(errorCode.includes('auth/email-already-in-use')){
+            setEmailErr("⚠️   Email already in use")
+          }
+        });
     }
   };
 
@@ -50,12 +85,23 @@ const Registration = () => {
       className="flex justify-center items-center min-h-screen bg-cover bg-no-repeat	bg-center"
       style={{ backgroundImage: `url(${bgTwo})` }}
     >
+      <ToastContainer
+        position="top-left"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        />
       <div className="w-[620px] bg-transparent text-white px-8 py-10 rounded-xl border-2 border-teal-300 backdrop-blur-xl">
         <form action="">
           <h1 className="text-4xl text-yellow-50 text-center font-pops font-bold">
             Get started with easily register
           </h1>
-
           {/* EMAIL INPUT */}
           <div className="relative flex items-center w-full h-[50px] my-[30px]">
             <input
@@ -94,7 +140,7 @@ const Registration = () => {
               value={password}
               onChange={handlePassword}
               className="w-full h-full font-pops bg-transparent  outline-none border-2  border-teal-400 rounded-full text-white text-2xl py-55 px-10"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
             />
             {showPassword ? (
@@ -127,7 +173,7 @@ const Registration = () => {
             <p className="font-pops text-base mt-7">
               Already have an account ?{" "}
               <span href="" className="text-amber-500 font-semibold font-pops">
-                <Link to='/login'>Sign in</Link>
+                <Link to="/login">Sign in</Link>
               </span>
             </p>
           </div>
