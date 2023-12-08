@@ -14,11 +14,15 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { userLoginInfo } from "../../slices/userSlice";
 
 const Login = () => {
   // FIREBASE AUTHENTICATION
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+    // REACT HOOK
+    const dispatch = useDispatch();
   // NAVIGATE
   const navigate = useNavigate();
   // EMAIL
@@ -58,8 +62,11 @@ const Login = () => {
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
     ) {
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((user) => {
           toast.success("Login successfully done");
+          console.log(user)
+          dispatch(userLoginInfo(user.user))
+          localStorage.setItem('userLoginInfo',JSON.stringify(userLoginInfo(user.user)))
           setEmail("");
           setPassword("");
           setTimeout(() => {
