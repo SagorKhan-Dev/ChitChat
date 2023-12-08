@@ -8,10 +8,16 @@ import {
 } from "react-router-dom";
 import Registration from './pages/Registration/Registration.jsx';
 import Login from './pages/Login/Login.jsx';
+import Home from './pages/Home/Home.jsx';
 import firebaseConfig from './authentication/firebaseConfig.jsx';
 import 'react-toastify/dist/ReactToastify.css';
+import Forgot from './pages/Forgot/Forgot.jsx';
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
   {
     path: "/registration",
     element: <Registration />,
@@ -19,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/forgot",
+    element: <Forgot />,
   },
 ]);
 

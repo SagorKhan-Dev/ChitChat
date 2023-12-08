@@ -6,9 +6,13 @@ import { IoMdEyeOff } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 // TOSTIFY
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 // FIREBASAE AUTHENTICATION
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 
 const Registration = () => {
   //  FIREBASE AUTHENTICATON
@@ -62,19 +66,22 @@ const Registration = () => {
     ) {
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          toast.success("Registration done, please verify your email");
-          setEmail("");
-          setFullName("");
-          setPassword("");
-          setTimeout(()=>{
-            navigate('/login')
-          },2000)
+          sendEmailVerification(auth.currentUser)
+          .then(() => {
+            toast.success("Registration done, please verify your email");
+            setEmail("");
+            setFullName("");
+            setPassword("");
+            setTimeout(() => {
+              navigate("/login");
+            }, 2000);
+          });
         })
         .catch((error) => {
           const errorCode = error.code;
           console.log(errorCode);
-          if(errorCode.includes('auth/email-already-in-use')){
-            setEmailErr("⚠️   Email already in use")
+          if (errorCode.includes("auth/email-already-in-use")) {
+            setEmailErr("⚠️   Email already in use");
           }
         });
     }
@@ -96,7 +103,7 @@ const Registration = () => {
         draggable
         pauseOnHover
         theme="dark"
-        />
+      />
       <div className="w-[620px] bg-transparent text-white px-8 py-10 rounded-xl border-2 border-teal-300 backdrop-blur-xl">
         <form action="">
           <h1 className="text-4xl text-yellow-50 text-center font-pops font-bold">
